@@ -13,6 +13,13 @@ const getClientEnvironment = require('./env');
 const paths = require('./paths');
 const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
 
+const postcssAspectRatioMini = require('postcss-aspect-ratio-mini');
+const postcssPxToViewport = require('postcss-px-to-viewport');
+const postcssWriteSvg = require('postcss-write-svg');
+const postcssCssnext = require('postcss-cssnext');
+const postcssViewportUnits = require('postcss-viewport-units');
+const cssnano = require('cssnano');
+
 // Webpack uses `publicPath` to determine where the app is being served from.
 // In development, we always serve from the root. This makes config easier.
 const publicPath = '/';
@@ -96,7 +103,7 @@ module.exports = {
       '.jsx',
     ],
     alias: {
-      
+
       // Support React Native Web
       // https://www.smashingmagazine.com/2016/08/a-glimpse-into-the-future-with-react-native-for-web/
       'react-native': 'react-native-web',
@@ -145,7 +152,7 @@ module.exports = {
             include: paths.appSrc,
             loader: require.resolve('babel-loader'),
             options: {
-              
+
               compact: true,
             },
           },
@@ -196,6 +203,24 @@ module.exports = {
                       ],
                       flexbox: 'no-2009',
                     }),
+                    postcssPxToViewport({
+                      viewportWidth: 750, // (Number) The width of the viewport.
+                      viewportHeight: 1334, // (Number) The height of the viewport.
+                      unitPrecision: 3, // (Number) The decimal numbers to allow the REM units to grow to.
+                      viewportUnit: 'vw', // (String) Expected units.
+                      selectorBlackList: ['.ignore', '.hairlines', '.list-row-bottom-line', '.list-row-top-line'], // (Array) The selectors to ignore and leave as px.
+                      minPixelValue: 1, // (Number) Set the minimum pixel value to replace.
+                      mediaQuery: false // (Boolean) Allow px to be converted in media queries.
+                    }),
+                    postcssWriteSvg({
+                      utf8: false
+                    }),
+                    cssnano({
+                      "cssnano-preset-advanced": {
+                        zindex: false,
+                        autoprefixer: false
+                      },
+                    })
                   ],
                 },
               },
